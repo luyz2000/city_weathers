@@ -13,7 +13,7 @@ module Reservamos
 
       if response.status == 201
         @parsed_response = JSON.parse(response.body, object_class: OpenStruct)
-        success_response(only_cities)
+        success_response(only_cities_in_mexico)
       else
         error_response(response.body)
       end
@@ -23,8 +23,11 @@ module Reservamos
 
     private
 
-    def only_cities
-      parsed_response.select { |city| city.result_type == 'city' }
+    def only_cities_in_mexico
+      parsed_response.select do |city|
+        city.result_type == 'city' &&
+          city.country == 'México'
+      end
     end
   end
 end
