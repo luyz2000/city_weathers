@@ -22,7 +22,7 @@ Things you may want to cover:
   not required
 
 * How to run the test suite
-  not required
+  rspec
 
 * Services (job queues, cache servers, search engines, etc.)
   not required
@@ -32,6 +32,7 @@ Things you may want to cover:
 
 * How to get results
   visit next url and replace :city_name with the name of the city of you want information of his weather
+  
   http://localhost:3000/weather/:city_name
 
   Example:
