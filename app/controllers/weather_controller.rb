@@ -1,9 +1,11 @@
 class WeatherController < ApplicationController
-  def show
-    request_places = Reservamos::RequestPlaces.new(params[:city_name]).call
+  before_action :set_places, only: [:show]
+  before_action :set_places_from, only: [:recomended_city, :best_day_to_travel]
 
-    if request_places.success?
-      response = get_places(request_places.data, type_temp: params[:type_temp])
+  def show
+    @request_places = Reservamos::RequestPlaces.new(params[:city_name]).call
+    if @request_places.success?
+      response = get_places(@request_places.data, 'all')
       render(status: :ok, json: response)
     else
       render(status: :unprocessable_entity)
@@ -11,10 +13,17 @@ class WeatherController < ApplicationController
   end
 
   def recomended_city
-    request_places = Reservamos::RequestPlaces.new(params[:city_name]).call
+    if @request_places.success?
+      response = get_places(@request_places.data, 'best_temp')
+      render(status: :ok, json: response)
+    else
+      render(status: :unprocessable_entity)
+    end
+  end
 
-    if request_places.success?
-      response = get_places(request_places.data, type_temp: params[:type_temp])
+  def best_day_to_travel
+    if @request_places.success?
+      response = get_places(@request_places.data, 'best_temp_and_humidity')
       render(status: :ok, json: response)
     else
       render(status: :unprocessable_entity)
@@ -22,6 +31,14 @@ class WeatherController < ApplicationController
   end
 
   private
+
+  def set_places
+    @request_places = Reservamos::RequestPlaces.new(params[:city_name]).call
+  end
+
+  def set_places_from
+    @request_places = Reservamos::RequestPlacesFrom.new(params[:city_name]).call
+  end
 
   def get_places(places, type_temp)
     collection =
@@ -34,7 +51,7 @@ class WeatherController < ApplicationController
 
     collection.compact!
     collection = collection.uniq
-    type_temp == 'all' ? type_temp : collection.sort_by{|city| city[:weather].to_i }.last
+    type_temp == 'best_temp' ? collection.sort_by{|city| city[:weather].to_i }.last : collection
   end
 
   def build_city_weather(city, weather_data)

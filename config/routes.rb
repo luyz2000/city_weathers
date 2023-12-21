@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :weather, only: :show, param: :city_name do
     member do
       get :recomended_city
+      get :best_day_to_travel
     end
   end
 

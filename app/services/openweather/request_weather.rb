@@ -61,7 +61,8 @@ module Openweather
           humidity: weather["humidity"]
         }
       end
-      collection.sort_by{|weather| weather[:humidity] }.last
+      # CONFUSED: al final no recuerdo bien si dijiste por la mejor humedad o la maxima temperatura
+      collection.sort_by{|weather| [weather[:humidity], weather[:maximum_temperature].to_i] }.last
     end
 
   end
