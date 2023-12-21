@@ -3,5 +3,10 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "articles#index"
-  resources :weather, only: :show, param: :city_name
+  resources :weather, only: :show, param: :city_name do
+    member do
+      get :recomended_city
+    end
+  end
+
 end
